@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>그림자밟기 메인 생성기</title>
+  <!-- 파비콘 아이콘 추가 -->
+  <link rel="icon" href="assets/logo.png" type="image/png">
+  <!-- Pretendard 폰트 (본문용) -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+  <!-- 구글 명조 폰트 (제목 및 국한문 혼용 서정적 분위기용) -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;700&family=Noto+Serif+JP:wght@300;400;700&family=Shippori+Mincho:wght@400;700&display=swap" rel="stylesheet">
+  <!-- CSS 스타일시트 연동 -->
+  <link rel="stylesheet" href="style.css">
+  <!-- html2canvas 라이브러리 CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- 상단 타이틀 -->
+    <header class="app-header">
+      <h1 class="main-title">그림자밟기 메인 생성기</h1>
+      <p class="sub-title">影踏み メイン 作成機</p>
+    </header>
+
+    <!-- 메인 콘텐츠 영역 -->
+    <main class="app-content">
+      <!-- 1. 학생증 카드 본체 (이 영역 전체를 캡처하여 저장함) -->
+      <div id="student-card" class="student-card preset-tsukinowa">
+        
+        <!-- 왼쪽 세션 (프로필 사진, 캐치프레이즈, 로고) -->
+        <div class="card-left">
+          <!-- 프로필 사진 첨부 박스 -->
+          <div id="profile-pic-container" class="profile-pic-box">
+            <span class="placeholder-text">프로필 사진<br>첨부하는 곳</span>
+            <img id="profile-img" src="" alt="프로필 이미지" class="hidden">
+            <input type="file" id="profile-upload" accept="image/*">
+          </div>
+          
+          <!-- 캐치프레이즈 -->
+          <div class="catchphrase-container">
+            <span class="bracket">『</span>
+            <span id="catchphrase-text" class="editable red-text" contenteditable="true" spellcheck="false">캐치프레이즈</span>
+            <span class="bracket">』</span>
+          </div>
+
+          <!-- 학교 로고 및 이름 영역 -->
+          <div class="school-logo-area">
+            <div id="school-logo-box" class="school-logo-box">
+              <span id="logo-placeholder" class="logo-placeholder-text">학교 로고<br>들어가는곳</span>
+              <img id="logo-img" src="" alt="학교 로고" class="hidden">
+            </div>
+          </div>
+        </div>
+
+        <!-- 중앙 정보 세션 (이름, 상세정보) -->
+        <div class="card-center">
+          
+          <!-- 이름 영역 그룹 (쪼개진 세로선 + 이름) -->
+          <div class="name-section-group">
+            <div class="vertical-divider"></div>
+            <div class="name-area">
+              <ruby class="ruby-name-container">
+                <span id="name-korean" class="editable red-text" contenteditable="true" spellcheck="false">이름</span>
+                <rt id="name-hanja" class="editable red-text" contenteditable="true" spellcheck="false">한자 이름</rt>
+              </ruby>
+            </div>
+          </div>
+
+          <!-- 상세 정보 그룹 (쪼개진 세로선 + 상세정보 목록) -->
+          <div class="details-section-group">
+            <div class="vertical-divider"></div>
+            <div class="details-list">
+              <div class="detail-row editable red-text" contenteditable="true" spellcheck="false">동아리</div>
+              <div class="detail-row">
+                <span id="detail-year" class="editable red-text" contenteditable="true" spellcheck="false">2</span>年
+                <span id="detail-class" class="editable red-text" contenteditable="true" spellcheck="false">A</span>組
+              </div>
+              <div class="detail-row">
+                <span id="detail-age" class="editable red-text" contenteditable="true" spellcheck="false">18</span>歳
+              </div>
+              <div class="detail-row editable red-text" contenteditable="true" spellcheck="false">성별</div>
+              <div class="detail-row">
+                <span id="detail-height" class="editable red-text" contenteditable="true" spellcheck="false">신장</span>cm
+                <span id="detail-weight" class="editable red-text" contenteditable="true" spellcheck="false">체중</span>kg
+              </div>
+              <div class="detail-row editable red-text" contenteditable="true" spellcheck="false">생일</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 오른쪽 정보 세션 (성격 키워드, 기타) -->
+        <div class="card-right">
+          <!-- 성격 키워드 -->
+          <div class="text-section">
+            <h3 class="section-title">성격 키워드</h3>
+            <div id="personality-box" class="textarea-box editable" contenteditable="true" spellcheck="false" data-placeholder="자유롭게 작성">자유롭게 작성</div>
+          </div>
+
+          <!-- 기타 -->
+          <div class="text-section">
+            <h3 class="section-title">기타</h3>
+            <div id="other-box" class="textarea-box editable" contenteditable="true" spellcheck="false" data-placeholder="자유롭게 작성">자유롭게 작성</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 2. 우측 컨트롤 패널 (학교 테마 및 제어 버튼) -->
+      <aside class="control-panel">
+        <!-- 학교 프리셋 그룹 -->
+        <div class="preset-group">
+          <h4 class="group-title">학교 테마 선택</h4>
+          <div class="preset-buttons">
+
+            <button type="button" class="btn-preset" data-preset="tsukinowa">츠키노와</button>
+            <button type="button" class="btn-preset" data-preset="sekisetsu">세키세츠</button>
+            <button type="button" class="btn-preset" data-preset="katen">카텐</button>
+          </div>
+        </div>
+
+        <!-- 주요 제어 버튼 그룹 -->
+        <div class="action-group">
+          <button type="button" id="btn-add-sticker" class="btn-action btn-sticker">이미지 추가</button>
+          <input type="file" id="sticker-upload" accept="image/png,image/webp,image/gif,image/jpeg" multiple style="display:none;">
+          <button type="button" id="btn-export" class="btn-action btn-export">내보내기</button>
+          <button type="button" id="btn-reset" class="btn-action btn-reset">리 셋</button>
+          <button type="button" id="btn-help" class="btn-action btn-help">도움말</button>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <!-- 3. 드래그 플로팅 텍스트 포맷 툴바 -->
+  <div id="floating-toolbar" class="floating-toolbar hidden">
+    <button type="button" class="toolbar-btn btn-bold" title="굵게"><b>B</b></button>
+    <button type="button" class="toolbar-btn btn-italic" title="기울임"><i>I</i></button>
+    <div class="color-picker-container">
+      <button type="button" class="toolbar-btn btn-color" title="색상 선택">🎨</button>
+      <div class="color-dropdown hidden">
+        <button type="button" class="color-chip" style="background-color: #9e1b28;" data-color="#9e1b28" title="루비 레드"></button>
+        <button type="button" class="color-chip" style="background-color: #000000;" data-color="#000000" title="블랙"></button>
+        <button type="button" class="color-chip" style="background-color: #334588;" data-color="#334588" title="네이비"></button>
+        <button type="button" class="color-chip" style="background-color: #403F3C;" data-color="#403F3C" title="차콜"></button>
+        <button type="button" class="color-chip" style="background-color: #A50024;" data-color="#A50024" title="크림슨"></button>
+        <button type="button" class="color-chip" style="background-color: #E25822;" data-color="#E25822" title="오렌지"></button>
+        <button type="button" class="color-chip" style="background-color: #FF0000;" data-color="#FF0000" title="빨강"></button>
+        <button type="button" class="color-chip" style="background-color: #FF8C00;" data-color="#FF8C00" title="주황"></button>
+        <button type="button" class="color-chip" style="background-color: #FFD700;" data-color="#FFD700" title="노랑"></button>
+        <button type="button" class="color-chip" style="background-color: #2E8B57;" data-color="#2E8B57" title="초록"></button>
+        <button type="button" class="color-chip" style="background-color: #1E90FF;" data-color="#1E90FF" title="파랑"></button>
+        <button type="button" class="color-chip" style="background-color: #191970;" data-color="#191970" title="남색"></button>
+        <button type="button" class="color-chip" style="background-color: #8B00FF;" data-color="#8B00FF" title="보라"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 도움말 팝업 모달 -->
+  <div id="help-popup" class="help-popup-container hidden">
+    <div class="help-popup-content">
+      <button type="button" id="btn-close-help" class="help-popup-close">✕</button>
+      <h3 class="help-popup-title">도움말</h3>
+      <ol class="help-popup-list">
+        <li>본 사이트는 그림자밟기 @KAGEHUM1의 메인 이미지 제작용으로 작성되었습니다.</li>
+        <li>'프로필 사진 첨부하는 곳'을 누르면 이미지 삽입이 가능합니다.</li>
+        <li>강조하고 싶은 문장을 드래그하고, Ctrl+B를 누르면 볼드/기울이기/색상 변경 도구를 사용할 수 있습니다.</li>
+        <li>TAB 버튼을 누르면 다음 항목으로 넘어가집니다.</li>
+        <li>이미지 추가를 누르면 여러가지 사진을 불러와 스티커처럼 붙일 수 있습니다. (SD, 또는 꾸미기 이미지 등)</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- JS 로직 연동 -->
+  <script src="app.js"></script>
+</body>
+</html>
