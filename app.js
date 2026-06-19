@@ -23,6 +23,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnItalic = floatingToolbar.querySelector('.btn-italic');
   const btnColor = floatingToolbar.querySelector('.btn-color');
   const colorDropdown = floatingToolbar.querySelector('.color-dropdown');
+  const sizeInput = document.getElementById('size-input');
+  const btnSizeDown = floatingToolbar.querySelector('.btn-size-down');
+  const btnSizeUp = floatingToolbar.querySelector('.btn-size-up');
 
   // ==========================================================================
   // 2. 프로필 이미지 업로드 기능 (object-fit: cover 유지 및 로컬 리드)
@@ -36,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (file) {
       const reader = new FileReader();
       reader.onload = (event) => {
-        profileImg.src = event.target.result;
+        profileImg.style.backgroundImage = `url(${event.target.result})`;
         profileImg.classList.remove('hidden');
         profilePlaceholder.classList.add('hidden');
       };
@@ -155,6 +158,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (isWithinEditable) {
       currentSelectionRange = range.cloneRange();
+      
+      // 선택 영역의 현재 폰트 크기를 감지하여 크기 입력 필드에 자동으로 반영
+      try {
+        const parentEl = commonAncestor.nodeType === 3 ? commonAncestor.parentElement : commonAncestor;
+        const computedSize = window.getComputedStyle(parentEl).fontSize;
+        if (computedSize && sizeInput) {
+          let val = parseFloat(computedSize);
+          if (computedSize.includes('px')) {
+            // px을 pt로 대략 환산 (1pt = 1.33px)
+            val = Math.round(val * 0.75);
+          } else {
+            val = Math.round(val);
+          }
+          sizeInput.value = val;
+        }
+      } catch (e) {
+        // 무시
+      }
+
       showToolbar(range);
     } else {
       hideToolbar();
@@ -197,6 +219,55 @@ document.addEventListener('DOMContentLoaded', () => {
   btnItalic.addEventListener('click', () => {
     document.execCommand('italic', false, null);
     handleTextSelection();
+  });
+
+  // 글자 크기 적용 함수 (execCommand fontSize를 마커로 활용)
+  function applyFontSize(sizePt) {
+    // execCommand('fontSize')는 값 1~7만 받으므로, 마커로 '7'을 사용
+    document.execCommand('fontSize', false, '7');
+
+    // 마커로 생성된 <font size="7"> 태그를 찾아 원하는 pt 크기의 span으로 교체
+    const fontElements = card.querySelectorAll('font[size="7"]');
+    fontElements.forEach(font => {
+      const span = document.createElement('span');
+      span.style.fontSize = sizePt + 'pt';
+      span.innerHTML = font.innerHTML;
+      font.parentNode.replaceChild(span, font);
+    });
+  }
+
+  // − 버튼 (1pt 감소)
+  btnSizeDown.addEventListener('click', (e) => {
+    e.stopPropagation();
+    let val = parseInt(sizeInput.value) || 16;
+    val = Math.max(6, val - 1);
+    sizeInput.value = val;
+    applyFontSize(val);
+    handleTextSelection();
+  });
+
+  // + 버튼 (1pt 증가)
+  btnSizeUp.addEventListener('click', (e) => {
+    e.stopPropagation();
+    let val = parseInt(sizeInput.value) || 16;
+    val = Math.min(72, val + 1);
+    sizeInput.value = val;
+    applyFontSize(val);
+    handleTextSelection();
+  });
+
+  // 숫자 직접 입력 및 키보드 화살표 조정 시 실시간 적용
+  sizeInput.addEventListener('input', (e) => {
+    let val = parseInt(sizeInput.value);
+    if (!isNaN(val)) {
+      val = Math.max(6, Math.min(72, val));
+      applyFontSize(val);
+    }
+  });
+
+  // 숫자 입력 필드 포커스 유지 (선택 해제 방지)
+  sizeInput.addEventListener('mousedown', (e) => {
+    e.stopPropagation();
   });
 
   // 색상 칩 드롭다운 열기
@@ -503,7 +574,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 1. 프로필 이미지 리셋
-    profileImg.src = '';
+    profileImg.style.backgroundImage = '';
     profileImg.classList.add('hidden');
     profilePlaceholder.classList.remove('hidden');
     profileUploadInput.value = '';

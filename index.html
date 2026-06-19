@@ -34,7 +34,7 @@
           <!-- 프로필 사진 첨부 박스 -->
           <div id="profile-pic-container" class="profile-pic-box">
             <span class="placeholder-text">프로필 사진<br>첨부하는 곳</span>
-            <img id="profile-img" src="" alt="프로필 이미지" class="hidden">
+            <div id="profile-img" class="profile-img hidden"></div>
             <input type="file" id="profile-upload" accept="image/*">
           </div>
           
@@ -136,6 +136,15 @@
   <div id="floating-toolbar" class="floating-toolbar hidden">
     <button type="button" class="toolbar-btn btn-bold" title="굵게"><b>B</b></button>
     <button type="button" class="toolbar-btn btn-italic" title="기울임"><i>I</i></button>
+    
+    <!-- 글자 크기 선택 (인라인 ◀ 숫자 ▶ 컨트롤) -->
+    <div class="size-picker-container">
+      <button type="button" class="toolbar-btn btn-size-down" title="크기 줄이기">−</button>
+      <input type="number" id="size-input" class="size-input" value="16" min="6" max="72" step="1" title="글자 크기 (pt)">
+      <button type="button" class="toolbar-btn btn-size-up" title="크기 늘리기">+</button>
+    </div>
+
+    <!-- 색상 선택 -->
     <div class="color-picker-container">
       <button type="button" class="toolbar-btn btn-color" title="색상 선택">🎨</button>
       <div class="color-dropdown hidden">
@@ -164,7 +173,7 @@
       <ol class="help-popup-list">
         <li>본 사이트는 그림자밟기 @KAGEHUM1의 메인 이미지 제작용으로 작성되었습니다.</li>
         <li>'프로필 사진 첨부하는 곳'을 누르면 이미지 삽입이 가능합니다.</li>
-        <li>강조하고 싶은 문장을 드래그하고, Ctrl+B를 누르면 볼드/기울이기/색상 변경 도구를 사용할 수 있습니다.</li>
+        <li>강조하고 싶은 문장을 드래그하고, Ctrl+B를 누르면 볼드/기울이기/크기 변경/색상 변경 도구를 사용할 수 있습니다.</li>
         <li>TAB 버튼을 누르면 다음 항목으로 넘어가집니다.</li>
         <li>이미지 추가를 누르면 여러가지 사진을 불러와 스티커처럼 붙일 수 있습니다. (SD, 또는 꾸미기 이미지 등)</li>
       </ol>
