@@ -34,14 +34,39 @@ document.addEventListener('DOMContentLoaded', () => {
     profileUploadInput.click();
   });
 
+  // 컨테이너 크기 (CSS에서 180x240으로 고정)
+  const CONTAINER_W = 180;
+  const CONTAINER_H = 240;
+
   profileUploadInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = (event) => {
-        profileImg.style.backgroundImage = `url(${event.target.result})`;
-        profileImg.classList.remove('hidden');
-        profilePlaceholder.classList.add('hidden');
+        const dataUrl = event.target.result;
+
+        // 원본 이미지의 실제 해상도를 구하기 위해 임시 Image 객체 생성
+        const tempImg = new Image();
+        tempImg.onload = () => {
+          const imgW = tempImg.naturalWidth;
+          const imgH = tempImg.naturalHeight;
+
+          // cover 효과 계산: 컨테이너를 완전히 덮도록 비율 유지하며 확대
+          const scaleW = CONTAINER_W / imgW;
+          const scaleH = CONTAINER_H / imgH;
+          const scale = Math.max(scaleW, scaleH); // 큰 쪽 기준
+
+          const renderW = Math.ceil(imgW * scale);
+          const renderH = Math.ceil(imgH * scale);
+
+          // img 태그에 계산된 크기 적용 (CSS transform으로 중앙 정렬)
+          profileImg.src = dataUrl;
+          profileImg.style.width = renderW + 'px';
+          profileImg.style.height = renderH + 'px';
+          profileImg.classList.remove('hidden');
+          profilePlaceholder.classList.add('hidden');
+        };
+        tempImg.src = dataUrl;
       };
       reader.readAsDataURL(file);
     }
@@ -574,7 +599,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 1. 프로필 이미지 리셋
-    profileImg.style.backgroundImage = '';
+    profileImg.src = '';
+    profileImg.style.width = '';
+    profileImg.style.height = '';
     profileImg.classList.add('hidden');
     profilePlaceholder.classList.remove('hidden');
     profileUploadInput.value = '';
