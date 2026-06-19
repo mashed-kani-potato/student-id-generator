@@ -367,7 +367,7 @@ body {
   flex-direction: column;
   gap: 20px;
   flex-shrink: 0;
-  padding-top: 25px; /* 상단 정렬을 일치시킴 */
+  padding-top: 42px; /* 성격 키워드를 한자 이름과 같은 행에 정렬 (미세 조정 -2px) */
 }
 
 .text-section {
@@ -402,7 +402,7 @@ body {
 }
 
 #other-box {
-  height: 245px; /* 중앙 정보 영역의 생일 섹션 높이까지 맞추어 늘림 */
+  flex: 1; /* 남은 공간을 자동으로 채워 생일 행과 하단 정렬 */
 }
 
 /* 내보낼 때는 텍스트박스의 경계 점선을 가림 */
